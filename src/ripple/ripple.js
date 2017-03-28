@@ -70,45 +70,49 @@
    * @private
    */
   MaterialRipple.prototype.downHandler_ = function(event) {
-    if (!this.rippleElement_.style.width && !this.rippleElement_.style.height) {
-      var rect = this.element_.getBoundingClientRect();
-      this.boundHeight = rect.height;
-      this.boundWidth = rect.width;
-      this.rippleSize_ = Math.sqrt(rect.width * rect.width +
-          rect.height * rect.height) * 2 + 2;
-      this.rippleElement_.style.width = this.rippleSize_ + 'px';
-      this.rippleElement_.style.height = this.rippleSize_ + 'px';
-    }
-
-    this.rippleElement_.classList.add(this.CssClasses_.IS_VISIBLE);
-
-    if (event.type === 'mousedown' && this.ignoringMouseDown_) {
-      this.ignoringMouseDown_ = false;
+    if (event.type === "touchstart") {
+      return false;
     } else {
-      if (event.type === 'touchstart') {
-        this.ignoringMouseDown_ = true;
+      if (!this.rippleElement_.style.width && !this.rippleElement_.style.height) {
+        var rect = this.element_.getBoundingClientRect();
+        this.boundHeight = rect.height;
+        this.boundWidth = rect.width;
+        this.rippleSize_ = Math.sqrt(rect.width * rect.width +
+            rect.height * rect.height) * 2 + 2;
+        this.rippleElement_.style.width = this.rippleSize_ + 'px';
+        this.rippleElement_.style.height = this.rippleSize_ + 'px';
       }
-      var frameCount = this.getFrameCount();
-      if (frameCount > 0) {
-        return;
-      }
-      this.setFrameCount(1);
-      var bound = event.currentTarget.getBoundingClientRect();
-      var x;
-      var y;
-      // Check if we are handling a keyboard click.
-      if (event.clientX === 0 && event.clientY === 0) {
-        x = Math.round(bound.width / 2);
-        y = Math.round(bound.height / 2);
+
+      this.rippleElement_.classList.add(this.CssClasses_.IS_VISIBLE);
+
+      if (event.type === 'mousedown' && this.ignoringMouseDown_) {
+        this.ignoringMouseDown_ = false;
       } else {
-        var clientX = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
-        var clientY = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
-        x = Math.round(clientX - bound.left);
-        y = Math.round(clientY - bound.top);
+        if (event.type === 'touchstart') {
+          this.ignoringMouseDown_ = true;
+        }
+        var frameCount = this.getFrameCount();
+        if (frameCount > 0) {
+          return;
+        }
+        this.setFrameCount(1);
+        var bound = event.currentTarget.getBoundingClientRect();
+        var x;
+        var y;
+        // Check if we are handling a keyboard click.
+        if (event.clientX === 0 && event.clientY === 0) {
+          x = Math.round(bound.width / 2);
+          y = Math.round(bound.height / 2);
+        } else {
+          var clientX = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
+          var clientY = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
+          x = Math.round(clientX - bound.left);
+          y = Math.round(clientY - bound.top);
+        }
+        this.setRippleXY(x, y);
+        this.setRippleStyles(true);
+        window.requestAnimationFrame(this.animFrameHandler.bind(this));
       }
-      this.setRippleXY(x, y);
-      this.setRippleStyles(true);
-      window.requestAnimationFrame(this.animFrameHandler.bind(this));
     }
   };
 
