@@ -70,7 +70,7 @@
    * @private
    */
   MaterialRipple.prototype.downHandler_ = function(event) {
-    if (event.type === "touchstart") {
+    if (event.type === 'touchstart') {
       return false;
     } else {
       if (!this.rippleElement_.style.width && !this.rippleElement_.style.height) {
